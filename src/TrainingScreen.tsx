@@ -30,9 +30,21 @@ export default function TrainingScreen({ scenario, level, onBack }: TrainingScre
     utterance.lang = 'en-US';
     utterance.rate = level === 'beginner' ? 0.8 : level === 'intermediate' ? 1.0 : 1.2;
     utterance.onend = () => setIsSpeaking(false);
+    
+    // 英語の音声を明示的に選択
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(voice => 
+      voice.lang.startsWith('en-') && voice.name.includes('Google')
+    ) || voices.find(voice => 
+      voice.lang.startsWith('en-')
+    );
+    
+    if (englishVoice) {
+      utterance.voice = englishVoice;
+    }
+    
     window.speechSynthesis.speak(utterance);
   };
-
   const speakAllSentences = () => {
     if (script) {
       const allText = script.sentences.join(' ');
